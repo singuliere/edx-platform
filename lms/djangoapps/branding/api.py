@@ -35,7 +35,7 @@ def is_enabled():
     return BrandingApiConfig.current().enabled
 
 
-def get_footer(is_secure=True, language='en'):
+def get_footer(is_secure=True, language=settings.LANGUAGE_CODE):
     """Retrieve information used to render the footer.
 
     This will handle both the Open edX and edX.org versions
@@ -171,19 +171,19 @@ def _footer_social_links():
     return links
 
 
-def _footer_connect_links(language="en"):
+def _footer_connect_links(language=settings.LANGUAGE_CODE):
     """Return the connect links to display in the footer. """
     links = OrderedDict([
         ("blog", (marketing_link("BLOG"), _("Blog"))),
         ("contact", (_build_support_form_url(), _("Contact Us"))),
         ("help-center", (settings.SUPPORT_SITE_LINK, _("Help Center"))),
-        ("media_kit", (marketing_link("MEDIA_KIT"), _("Media Kit"))),
-        ("donate", (marketing_link("DONATE"), _("Donate"))),
-        ])
+    ])
 
-    if language.startswith("es"):
-        del links["media_kit"]
-        del links["donate"]
+    if language == settings.LANGUAGE_CODE:
+        links.update({
+            "media_kit": (marketing_link("MEDIA_KIT"), _("Media Kit")),
+            "donate": (marketing_link("DONATE"), _("Donate"))
+        })
 
     return [
         {
@@ -200,22 +200,24 @@ def _build_support_form_url():
     return '{base_url}/support/contact_us'.format(base_url=settings.LMS_ROOT_URL)
 
 
-def _footer_navigation_links(language="en"):
+def _footer_navigation_links(language=settings.LANGUAGE_CODE):
     """Return the navigation links to display in the footer. """
     platform_name = configuration_helpers.get_value('platform_name', settings.PLATFORM_NAME)
     links = OrderedDict([
         ("about", (marketing_link("ABOUT"), _("About"))),
         ("enterprise", (marketing_link("ENTERPRISE"),
-        _("{platform_name} for Business").format(platform_name=platform_name))),
+                        _("{platform_name} for Business").format(platform_name=platform_name))),
         ("blog", (marketing_link("BLOG"), _("Blog"))),
-        ("news", (marketing_link("NEWS"), _("News"))),
         ("help-center", (settings.SUPPORT_SITE_LINK, _("Help Center"))),
         ("contact", (reverse("support:contact_us"), _("Contact"))),
         ("careers", (marketing_link("CAREERS"), _("Careers"))),
         ("donate", (marketing_link("DONATE"), _("Donate"))),
     ])
-    if language.startswith("es"):
-        del links["news"]
+
+    if language == settings.LANGUAGE_CODE:
+        links.update({
+            "news": (marketing_link("NEWS"), _("News"))
+        })
 
     return [
         {
@@ -228,14 +230,13 @@ def _footer_navigation_links(language="en"):
     ]
 
 
-def _footer_legal_links(language="en"):
+def _footer_legal_links(language=settings.LANGUAGE_CODE):
     """Return the legal footer links (e.g. terms of service). """
 
     links = [
         ("terms_of_service_and_honor_code", (marketing_link("TOS_AND_HONOR"), _("Terms of Service & Honor Code"))),
         ("privacy_policy", (marketing_link("PRIVACY"), _("Privacy Policy"))),
         ("accessibility_policy", (marketing_link("ACCESSIBILITY"), _("Accessibility Policy"))),
-        ("sitemap", (marketing_link("SITE_MAP"), _("Sitemap"))),
         ("media_kit", (marketing_link("MEDIA_KIT"), _("Media Kit"))),
     ]
 
@@ -249,8 +250,10 @@ def _footer_legal_links(language="en"):
         ])
 
     links = OrderedDict(links)
-    if language.startswith("es"):
-        del links["sitemap"]
+    if language == settings.LANGUAGE_CODE:
+        links.update({
+            "sitemap": (marketing_link("SITE_MAP"), _("Sitemap"))
+        })
 
     return [
         {
@@ -263,24 +266,22 @@ def _footer_legal_links(language="en"):
     ]
 
 
-def _footer_business_links(language="en"):
+def _footer_business_links(language=settings.LANGUAGE_CODE):
     """Return the business links to display in the footer. """
     platform_name = configuration_helpers.get_value('platform_name', settings.PLATFORM_NAME)
     links = OrderedDict([
         ("about", (marketing_link("ABOUT"), _("About"))),
         ("enterprise", (marketing_link("ENTERPRISE"),
          _("{platform_name} for Business").format(platform_name=platform_name))),
-        ("affiliates", (marketing_link("AFFILIATES"), _("Affiliates"))),
-        ("openedx", (_footer_openedx_link()["url"], _("Open edX"))),
-        ("careers", (marketing_link("CAREERS"), _("Careers"))),
         ("news", (marketing_link("NEWS"), _("News"))),
     ])
 
-    if language.startswith("es"):
-        del links["affiliates"]
-        del links["openedx"]
-        del links["careers"]
-
+    if language == settings.LANGUAGE_CODE:
+        links.update({
+            "affiliates": (marketing_link("AFFILIATES"), _("Affiliates")),
+            "openedx": (_footer_openedx_link()["url"], _("Open edX")),
+            "careers": (marketing_link("CAREERS"), _("Careers")),
+        })
     return [
         {
             "name": link_name,
@@ -292,14 +293,13 @@ def _footer_business_links(language="en"):
     ]
 
 
-def _footer_more_info_links(language="en"):
+def _footer_more_info_links(language=settings.LANGUAGE_CODE):
     """Return the More Information footer links (e.g. terms of service). """
 
     links = [
         ("terms_of_service_and_honor_code", (marketing_link("TOS_AND_HONOR"), _("Terms of Service & Honor Code"))),
         ("privacy_policy", (marketing_link("PRIVACY"), _("Privacy Policy"))),
         ("accessibility_policy", (marketing_link("ACCESSIBILITY"), _("Accessibility Policy"))),
-        ("trademarks", (marketing_link("TRADEMARKS"), _("Trademark Policy"))),
         ("sitemap", (marketing_link("SITE_MAP"), _("Sitemap"))),
     ]
 
@@ -312,8 +312,10 @@ def _footer_more_info_links(language="en"):
             ("honor_code", (marketing_link("HONOR"), _("Honor Code"))),
         ])
     links = OrderedDict(links)
-    if language.startswith("es"):
-        del links["trademarks"]
+    if language == settings.LANGUAGE_CODE:
+        links.update({
+            "trademarks": (marketing_link("TRADEMARKS"), _("Trademark Policy"))
+        })
 
     return [
         {
